@@ -8,6 +8,10 @@ from bullet import Shot
 def main():
     print("Starting Asteroids!")   
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.font.init()
+    font = pygame.font.SysFont(FONT, SCORE_TEXT_SIZE) 
+    current_score = 0
+    
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -47,13 +51,16 @@ def main():
             asteroid_destroyed = False
             for shot in shots:
                 if asteroid_obj.check_collisions(shot):
-                    asteroid_obj.split()
+                    current_score += asteroid_obj.get_score()
+                    asteroid_obj.split()                    
                     shot.kill()
                     asteroid_destroyed = True
                     break
             if asteroid_destroyed:
                 break
-                
+        score_surface = font.render(f"SCORE: {current_score}", True, "orange")                 
+        screen.blit(score_surface, (SCORE_POS_X, SCORE_POS_Y))
+        
         # Render the screen
         pygame.display.flip()
         
