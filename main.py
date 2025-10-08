@@ -36,6 +36,12 @@ def main():
         dt = clock.tick(FPS) / MS_TO_S
         updatable.update(dt)
         
+        # Check for collisions
+        for asteroid_obj in asteroids:
+            if asteroid_obj.check_collisions(player_1):
+                print("Game Over!!!")
+                return
+                
         # Render the screen
         pygame.display.flip()
         
