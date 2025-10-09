@@ -4,6 +4,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from bullet import Shot
+from utils import get_high_score, update_high_score
 
 def main():
     print("Starting Asteroids!")
@@ -28,6 +29,7 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
     current_score = 0
+    high_score = get_high_score()
     game_over = False
     running = True 
     
@@ -37,7 +39,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q and game_over:
+                if (event.key == pygame.K_q or event.key == pygame.K_ESCAPE) and game_over:
                     running = False
 
         # --- Game Logic (only if not game_over) ---
@@ -66,6 +68,10 @@ def main():
 
             score_surface = font.render(f"SCORE: {current_score}", True, "orange")
             screen.blit(score_surface, (SCORE_POS_X, SCORE_POS_Y))
+            
+            high_score = max(high_score, current_score)
+            high_score_surface = font.render(f"HIGH SCORE: {high_score}", True, "blue")
+            screen.blit(high_score_surface, (SCORE_POS_X, SCORE_POS_Y - 50))
 
         # --- Game Over Display (always check, but only draw if game_over) ---
         else:
@@ -76,7 +82,7 @@ def main():
             screen.blit(end_surface, end_rect)
 
             # Optional: Add instruction to quit
-            instruction_surface = font.render("Press 'Q' to quit", True, "white")
+            instruction_surface = font.render("Press 'Q' or 'ESC' to quit", True, "white")
             instruction_rect = instruction_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50))
             screen.blit(instruction_surface, instruction_rect)
 
@@ -84,7 +90,8 @@ def main():
         pygame.display.flip()
 
     pygame.quit() # <--- Quit pygame cleanly
-    print("Game Finished")
+    update_high_score(high_score)
+    print("Game Finished!")
 
 
 if __name__ == "__main__":
