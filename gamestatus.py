@@ -32,3 +32,54 @@ class GameStatus():
         self.high_score = get_high_score()
         self.game_over = False
         self.running = True
+        
+    def check_exit_conditions(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.KEYDOWN:
+                if (event.key == pygame.K_q or event.key == pygame.K_ESCAPE) and self.game_over:
+                    self.running = False
+    
+    def draw(self):
+        # Draw the background and all foreground object
+        self.screen.fill("black")
+        for obj in self.drawable:
+            obj.draw(self.screen)
+            
+    def update(self):
+        dt = self.clock.tick(FPS) / MS_TO_S
+        self.updatable.update(dt)
+        
+    def check_collisions(self):
+        for asteroid_obj in self.asteroids:
+            if asteroid_obj.check_collisions(self.player_1):
+                self.game_over = True
+                break
+
+            for shot in list(self.shots):
+                if asteroid_obj.check_collisions(shot):
+                    self.current_score += asteroid_obj.get_score()
+                    asteroid_obj.split()
+                    shot.kill()
+                    break
+                
+    def render_high_score(self):
+        score_surface = self.font.render(f"SCORE: {self.current_score}", True, "orange")
+        self.screen.blit(score_surface, (SCORE_POS_X, SCORE_POS_Y))
+        
+        self.high_score = max(self.high_score, self.current_score)
+        high_score_surface = self.font.render(f"HIGH SCORE: {self.high_score}", True, "blue")
+        self.screen.blit(high_score_surface, (SCORE_POS_X, SCORE_POS_Y - 50))
+    
+    def render_game_over_screen(self):
+        end_surface = self.font.render("GAME OVER !!!", True, "red")
+                
+        # Calculate position to center the text
+        end_rect = end_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        self.screen.blit(end_surface, end_rect)
+
+        # Optional: Add instruction to quit
+        instruction_surface = self.font.render("Press 'Q' or 'ESC' to quit", True, "white")
+        instruction_rect = instruction_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50))
+        self.screen.blit(instruction_surface, instruction_rect)
