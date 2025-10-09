@@ -1,4 +1,5 @@
 import pygame
+import os
 from circleshape import CircleShape
 from bullet import Shot
 from constants import *
@@ -6,23 +7,20 @@ from constants import *
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
-        self.rotation = 0
+        self.rotation = 180
         self.shoot_cooldown = 0
-    
-    # in the player class
-    def triangle(self):
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
-        a = self.position + forward * self.radius
-        b = self.position - forward * self.radius - right
-        c = self.position - forward * self.radius + right
-        return [a, b, c]
+        self.original_image = pygame.image.load(os.path.join("images/player.png")).convert_alpha()
+        self.image = self.original_image.copy()    
+        self.radius = PLAYER_RADIUS
     
     def draw(self, screen):
-        pygame.draw.polygon(screen, "white", self.triangle(), 2)
+        self.image = pygame.transform.rotate(self.original_image, -self.rotation)
+        self.rect = self.image.get_rect(center=self.position)
+        screen.blit(self.image, self.rect)
         
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
+        self.rotation %= 360
     
     def move(self, dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
