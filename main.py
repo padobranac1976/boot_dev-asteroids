@@ -15,6 +15,7 @@ def main():
             game_status.update()
             game_status.check_collisions()
             game_status.render_high_score()
+            game_status.render_current_lives()
 
         # --- Game Over Display (always check, but only draw if game_over) ---
         else:
