@@ -12,6 +12,7 @@ class Player(CircleShape):
         self.original_image = pygame.image.load(os.path.join("images/player.png")).convert_alpha()
         self.image = self.original_image.copy()    
         self.radius = PLAYER_RADIUS
+        self.lives = PLAYER_LIVES
     
     def draw(self, screen):
         self.image = pygame.transform.rotate(self.original_image, -self.rotation)

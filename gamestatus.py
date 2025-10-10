@@ -54,8 +54,11 @@ class GameStatus():
     def check_collisions(self):
         for asteroid_obj in self.asteroids:
             if asteroid_obj.check_collisions(self.player_1):
-                self.game_over = True
-                break
+                asteroid_obj.kill()
+                self.player_1.lives -= 1
+                if self.player_1.lives == 0:
+                    self.game_over = True                
+                    break
 
             for shot in list(self.shots):
                 if asteroid_obj.check_collisions(shot):
