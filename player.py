@@ -10,7 +10,8 @@ class Player(CircleShape):
         self.rotation = 180
         self.shoot_cooldown = 0
         self.original_image = pygame.image.load(os.path.join("images/player.png")).convert_alpha()
-        self.image = self.original_image.copy()    
+        self.image = self.original_image.copy()
+        self.life_active_image = pygame.image.load(os.path.join("images/life_active.png")).convert_alpha()
         self.radius = PLAYER_RADIUS
         self.lives = PLAYER_LIVES
     

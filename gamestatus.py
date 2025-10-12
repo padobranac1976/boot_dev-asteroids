@@ -75,9 +75,9 @@ class GameStatus():
         high_score_surface = self.font.render(f"HIGH SCORE: {self.high_score}", True, "blue")
         self.screen.blit(high_score_surface, (SCORE_POS_X, SCORE_POS_Y - 50))
     
-    def render_current_lives(self):
-        life_surface = self.font.render(f"Current Lives: {self.player_1.lives}", True, "yellow")
-        self.screen.blit(life_surface, (SCORE_POS_X, SCORE_POS_Y + 50))        
+    def render_current_lives(self):        
+        for offset in range(self.player_1.lives):
+            self.screen.blit(self.player_1.life_active_image, (SCORE_POS_X + offset * 30, SCORE_POS_Y + 55))
         
     def render_game_over_screen(self):
         end_surface = self.font.render("GAME OVER !!!", True, "red")
