@@ -1,5 +1,5 @@
 import os
-from constants import *
+from utils.constants import *
 
 def update_high_score(new_score):
     high_score = get_high_score()

@@ -1,10 +1,10 @@
 import pygame
-from constants import *
-from player import Player
-from asteroid import Asteroid
-from asteroidfield import AsteroidField
-from bullet import Shot
-from utils import get_high_score
+from utils.constants import *
+from objects.player import Player
+from objects.asteroid import Asteroid
+from objects.asteroidfield import AsteroidField
+from objects.bullet import Shot
+from utils.utils import get_high_score
 
 class GameStatus():
     def __init__(self):

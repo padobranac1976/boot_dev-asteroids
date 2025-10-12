@@ -1,6 +1,6 @@
 import pygame
-from utils import update_high_score
-from gamestatus import GameStatus
+from utils.utils import update_high_score
+from utils.gamestatus import GameStatus
 
 def main():
     print("Starting Asteroids!")
