@@ -73,11 +73,11 @@ class GameStatus():
         
         self.high_score = max(self.high_score, self.current_score)
         high_score_surface = self.font.render(f"HIGH SCORE: {self.high_score}", True, "blue")
-        self.screen.blit(high_score_surface, (SCORE_POS_X, SCORE_POS_Y - 50))
+        self.screen.blit(high_score_surface, (SCORE_POS_X, SCORE_POS_Y - VISU_OFFSET))
     
     def render_current_lives(self):        
-        for offset in range(self.player_1.lives):
-            self.screen.blit(self.player_1.life_active_image, (SCORE_POS_X + offset * 30, SCORE_POS_Y + 55))
+        for factor in range(self.player_1.lives):
+            self.screen.blit(self.player_1.life_active_image, (SCORE_POS_X + factor * PLAYER_LIFE_OFFSET, SCORE_POS_Y + VISU_OFFSET))
         
     def render_game_over_screen(self):
         end_surface = self.font.render("GAME OVER !!!", True, "red")
@@ -88,5 +88,5 @@ class GameStatus():
 
         # Optional: Add instruction to quit
         instruction_surface = self.font.render("Press 'Q' or 'ESC' to quit", True, "white")
-        instruction_rect = instruction_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50))
+        instruction_rect = instruction_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + VISU_OFFSET))
         self.screen.blit(instruction_surface, instruction_rect)
