@@ -5,6 +5,7 @@ from objects.asteroid import Asteroid
 from objects.asteroidfield import AsteroidField
 from objects.bullet import Shot
 from utils.utils import get_high_score
+from utils.utils import update_high_score
 
 class GameStatus():
     def __init__(self):
@@ -12,7 +13,9 @@ class GameStatus():
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.font.init()
         self.font = pygame.font.SysFont(FONT, TEXT_SIZE)
-
+        self.reset()        
+    
+    def reset(self):        
         self.updatable = pygame.sprite.Group()
         self.drawable = pygame.sprite.Group()
         self.asteroids = pygame.sprite.Group()
@@ -32,14 +35,28 @@ class GameStatus():
         self.high_score = get_high_score()
         self.game_over = False
         self.running = True
+        self.pause = False
         
     def check_exit_conditions(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == pygame.KEYDOWN:
-                if (event.key == pygame.K_q or event.key == pygame.K_ESCAPE) and self.game_over:
-                    self.running = False
+                if self.game_over:
+                    if event.key == pygame.K_q:
+                        self.running = False
+                    if event.key == pygame.K_p:
+                        update_high_score(self.current_score)
+                        self.reset()
+                        self.game_over = False                
+                else:
+                    if event.key == pygame.K_ESCAPE:
+                        self.pause = True
+                    if self.pause:
+                        if event.key == pygame.K_q:
+                            self.running = False
+                        if event.key == pygame.K_c:
+                            self.pause = False
     
     def draw(self):
         # Draw the background and all foreground object
@@ -86,7 +103,30 @@ class GameStatus():
         end_rect = end_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
         self.screen.blit(end_surface, end_rect)
 
-        # Optional: Add instruction to quit
-        instruction_surface = self.font.render("Press 'Q' or 'ESC' to quit", True, "white")
-        instruction_rect = instruction_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + VISU_OFFSET))
-        self.screen.blit(instruction_surface, instruction_rect)
+        # Add instruction to quit
+        quit_surface = self.font.render("Press 'Q' to quit", True, "white")
+        quit_rect = quit_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + VISU_OFFSET))
+        self.screen.blit(quit_surface, quit_rect)
+        
+        # Add instruction to start again
+        start_surface = self.font.render("Press 'P' to start again", True, "white")
+        start_rect = start_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 2 * VISU_OFFSET))
+        self.screen.blit(start_surface, start_rect)
+        
+    def render_game_paused(self):
+        pause_surface = self.font.render("PAUSE", True, "white")
+                
+        # Calculate position to center the text
+        pause_rect = pause_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        self.screen.blit(pause_surface, pause_rect)
+
+        # Add instruction to quit
+        quit_surface = self.font.render("Press 'Q' to quit", True, "white")
+        quit_rect = quit_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + VISU_OFFSET))
+        self.screen.blit(quit_surface, quit_rect)
+        
+        # Add instruction to start again
+        continue_surface = self.font.render("Press 'C' to continue", True, "white")
+        continue_rect = continue_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 2 * VISU_OFFSET))
+        self.screen.blit(continue_surface, continue_rect)
+        
