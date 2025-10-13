@@ -1,4 +1,5 @@
 import pygame
+import os
 from utils.constants import *
 from objects.player import Player
 from objects.asteroid import Asteroid
@@ -13,6 +14,8 @@ class GameStatus():
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.font.init()
         self.font = pygame.font.SysFont(FONT, TEXT_SIZE)
+        self.bg_image = pygame.image.load(os.path.join("images/bg_image.png")).convert_alpha()
+        self.explosion = pygame.image.load(os.path.join("images/explosion.png")).convert_alpha()
         self.reset()        
     
     def reset(self):        
@@ -60,27 +63,31 @@ class GameStatus():
     
     def draw(self):
         # Draw the background and all foreground object
-        self.screen.fill("black")
+        self.screen.blit(pygame.transform.scale(self.bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT)), (0, 0))
         for obj in self.drawable:
             obj.draw(self.screen)
             
     def update(self):
-        dt = self.clock.tick(FPS) / MS_TO_S
-        self.updatable.update(dt)
+        self.dt = self.clock.tick(FPS) / MS_TO_S
+        self.updatable.update(self.dt)
         
     def check_collisions(self):
         for asteroid_obj in self.asteroids:
             if asteroid_obj.check_collisions(self.player_1):
                 asteroid_obj.kill()
-                self.player_1.lives -= 1
+                if not self.player_1.invincible:
+                    self.player_1.explosion_cooldown = PLAYER_EXPLOSION_DURATION                    
+                    self.player_1.lives -= 1
                 if self.player_1.lives == 0:
-                    self.game_over = True                
+                    self.game_over = True
+                    self.render_explosion(self.player_1.position)
                     break
 
             for shot in list(self.shots):
                 if asteroid_obj.check_collisions(shot):
                     self.current_score += asteroid_obj.get_score()
                     asteroid_obj.split()
+                    self.render_explosion((asteroid_obj.position.x, asteroid_obj.position.y))
                     shot.kill()
                     break
                 
@@ -94,7 +101,7 @@ class GameStatus():
     
     def render_current_lives(self):        
         for factor in range(self.player_1.lives):
-            self.screen.blit(self.player_1.life_active_image, (SCORE_POS_X + factor * PLAYER_LIFE_OFFSET, SCORE_POS_Y + VISU_OFFSET))
+            self.screen.blit(self.player_1.life_image, (SCORE_POS_X + factor * PLAYER_LIFE_OFFSET, SCORE_POS_Y + VISU_OFFSET))
         
     def render_game_over_screen(self):
         end_surface = self.font.render("GAME OVER !!!", True, "red")
@@ -129,4 +136,8 @@ class GameStatus():
         continue_surface = self.font.render("Press 'C' to continue", True, "white")
         continue_rect = continue_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 2 * VISU_OFFSET))
         self.screen.blit(continue_surface, continue_rect)
+        
+    def render_explosion(self, position):
+        explosion_rect = self.explosion.get_rect(center=position)
+        self.screen.blit(self.explosion, explosion_rect)
         
