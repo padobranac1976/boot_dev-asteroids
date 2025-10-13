@@ -1,5 +1,6 @@
 import pygame
 import random
+import os
 
 from objects.circleshape import CircleShape
 from utils.constants import *
@@ -7,9 +8,12 @@ from utils.constants import *
 class Asteroid(CircleShape):
     def __init__(self, x, y, radius):
         super().__init__(x, y, radius)
+        image = pygame.image.load(os.path.join("images/asteroid.png")).convert_alpha()
+        self.image = pygame.transform.scale_by(image, self.radius // ASTEROID_MIN_RADIUS)
     
-    def draw(self, screen):
-        pygame.draw.circle(surface=screen, color="white", center=self.position, radius=self.radius, width=2)
+    def draw(self, screen):        
+        self.rect = self.image.get_rect(center=self.position)
+        screen.blit(self.image, self.rect)
         
     def update(self, dt):
         self.position += self.velocity * dt        
